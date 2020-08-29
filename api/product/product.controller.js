@@ -37,9 +37,16 @@ function index(req, res) {
 
 // Create product
 function create(req, res) {
-  return Product.create(req.body)
+  return Product.updateOne(req.params.id,req.body)
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
+}
+// update product
+function update(req, res) {
+return Product.updateOne({_id : req.params.id},{$set :req.body})
+.exec()
+.then(respondWithResult(res))
+.catch(handleError(res));
 }
 //Delete product
 function deleteproduct(req, res) {
@@ -72,4 +79,5 @@ module.exports = {
   show,
   index,
   deleteproduct,
+  update,
 };
