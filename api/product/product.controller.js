@@ -1,6 +1,6 @@
 const Product = require("./product.model");
 const User = require('../user/user.model');
-
+const ObjectId = require('mongodb').ObjectID;
 function respondWithResult(res, code) {
   const statusCode = code || 200;
   return (entity) => {
@@ -37,7 +37,7 @@ function index(req, res) {
 
 // Create product
 function create(req, res) {
-  return Product.updateOne(req.params.id,req.body)
+  return Product.create(req.body)
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
 }
@@ -73,6 +73,22 @@ function show(req, res, next) {
   //   }
   // });
 }
+function showmy_products(req, res, next) {
+  return Product.find({user: ObjectId(req.params.id) } ).populate({ path: 'user' }).exec()
+    .then(handleEntityNotFound(res))
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+  // Product.findById(req.params.id).populate({ path: 'user' }).exec(function (err, product) {
+  //   if (err) {
+  //     console.error("Error retrieving all product by id!");
+  //   } else {
+  //     console.log("server product = " + JSON.stringify(product.user));
+  //       // res.status(200).send(Product);
+  //       console.log("server product = " + JSON.stringify(product));
+  //       res.json(product);
+  //   }
+  // });
+}
 
 module.exports = {
   create,
@@ -80,4 +96,5 @@ module.exports = {
   index,
   deleteproduct,
   update,
+  showmy_products,
 };

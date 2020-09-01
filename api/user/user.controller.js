@@ -7,12 +7,24 @@ function validationError(res, statusCode) {
   const statusCodeLocal = statusCode || 422;
   return err => res.status(statusCodeLocal).json(err);
 }
-
+function respondWithResult(res, code) {
+  const statusCode = code || 200;
+  return (entity) => {
+    if (entity) {
+      res.status(statusCode).json(entity);
+    }
+  };
+}
 function handleError(res, statusCode) {
   const statusCodeLocal = statusCode || 500;
   return err => res.status(statusCodeLocal).send(err);
 }
-
+function show(req, res, next) {
+  return User.findById(req.params.id).exec()
+    // .then(handleEntityNotFound(res))
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+}
 /**
  * Get list of users
  * restriction: 'admin'
@@ -46,4 +58,5 @@ function create(req, res) {
 module.exports = {
   index,
   create,
+  show,
 };
